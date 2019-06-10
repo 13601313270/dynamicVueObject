@@ -51,5 +51,9 @@
         .text {
             padding-bottom: 10px;
         }
+
+        button {
+            border: solid 1px grey;
+        }
     }
 </style>

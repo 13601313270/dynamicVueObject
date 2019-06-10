@@ -25,3 +25,10 @@
         }
     }
 </script>
+<style scoped lang="less">
+    .home button {
+        border: solid 1px grey;
+        height: 30px;
+    }
+</style>
+

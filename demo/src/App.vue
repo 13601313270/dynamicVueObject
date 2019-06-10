@@ -1,7 +1,8 @@
 <template>
     <div id="app">
-        <router-view/>
+        <div>需要在"全局"的地方部署dynamic-vue-object.vue组件</div>
         <dynamic-vue-object></dynamic-vue-object>
+        <router-view/>
     </div>
 </template>
 <script>
