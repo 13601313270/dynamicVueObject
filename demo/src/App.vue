@@ -1,18 +1,11 @@
 <template>
     <div id="app">
-        <div>需要在"全局"的地方部署dynamic-vue-object.vue组件</div>
-        <dynamic-vue-object></dynamic-vue-object>
         <router-view/>
     </div>
 </template>
 <script>
-    import dynamicVueObject from './components/dynamicVueObject/dynamicVueObject.vue';
-
     export default {
-        name: 'home',
-        components: {
-            dynamicVueObject
-        }
+        name: 'home'
     }
 </script>
 <style lang="less">
