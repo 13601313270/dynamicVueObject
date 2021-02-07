@@ -1,8 +1,9 @@
 {
   "name": "dynamic-vue-object",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "vue组件函数化",
   "main": "dynamicVueObject/dynamicVueObject.js",
+  "types": "dynamicVueObject/dynamicVueObject.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

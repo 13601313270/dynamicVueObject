@@ -1,4 +1,4 @@
-# vue组件函数化
+# vue组件函数化初衷
 
 我们在vue项目开发过程中总是遇到各种个样的全局弹窗（权限提醒，alert提示，缴费提醒），这些全局弹窗全站很多地方在调用，调用调用很蛮烦，将这些组件部署到全局位置，又无法做到按需加载，而且部署到全局的组件数据回传（比如检测缴费是否完成）又是一个问题，我们又得借助vuex或者event来传递，又回造成vuex的滥用。
 
@@ -93,13 +93,16 @@ export default {
 这样调用起来很方便，我们可以看看类似alert这样的弹出框，有一些特点，就是过程化，它从被创建到使用，再到最后销毁，这个过程相对调用的页面是独立的，交互过程是高度过程化的。不像其他组件和页面直接可能多次交互。简单来说，就是“用完即删”。再有就是布局独立，布局层面跟调用者不存在占位归属，更像是全局的组件。
 只要符合这种特点的组件，封装成函数，是更方便的策略。
 
-# 使用
+# 本插件使用
 
-我们有一个任意的组件，例如temp.vue，这个组件有一个参数`name`
+我们有一个任意的组件，例如temp.vue，这个组件有一个参数`name`，有一个事件`ok`代表惦记了按钮
 
 ```vue
 <template>
-    <div>{{name}}</div>
+    <div>
+        {{name}}
+        <button @click="$emit('ok')">确认</button>
+    </div>
 </template>
 <script>
 export default {
@@ -109,19 +112,28 @@ export default {
 </script>
 ```
 
-## 将这个组件封装成一个函数，函数也有一个参数name。
+## 将这个组件封装成一个函数，函数也有一个参数name。本插件包有两个方法 createVueObj 和 deleteVueObj 。
+
+### createVueObj 页面全局body，渲染一个组件
+### deleteVueObj 销毁某个createVueObj创建的组件
+
 ```javascript
 import temp from './temp.vue';
-import {createVueObj} from 'dynamic-vue-object'
+import {createVueObj, deleteVueObj} from 'dynamic-vue-object'
 
 export function showTemp(name) {
-  createVueObj(temp, {
-    name
-  })
+    let dyVueObj = createVueObj(temp, {
+        name
+    }, {
+        ok() {
+            deleteVueObj(dyVueObj);// 点击按钮，关闭这个组件
+        }
+    })
 }
 ```
 
 ## 接下来，我们将可以在任何地方使用我们的这个函数了。
+
 ```vue
 <template>
     <div>
@@ -140,47 +152,30 @@ export default {
 </script>
 ```
 
-# 函数操作结果，
-## 有时候需要弹出的组件的操作作为结果，例如：弹出续费会员窗口，监听充值成功，弹出确认弹窗，监听点击确定，我们可以封装成一个Projise
+# 函数操作结果
 
-我们有一个组件
-
-```vue
-<template>
-    <div>
-        {{name}}
-        <button @click="$emit('ok')">确认</button>
-    </div>
-</template>
-<script>
-export default {
-    props: ['name'],
-    name: 'temp'
-}
-</script>
-```
-## 异步函数封装
-
-createVueObj函数第三个参数是组件emit
+## 有时候需要弹出的组件的操作作为结果，例如：弹出续费会员窗口，监听充值成功，弹出确认弹窗，监听点击确定，我们可以封装成一个Promise
 
 ```javascript
 import temp from './temp.vue';
-import {createVueObj} from 'dynamic-vue-object'
+import {createVueObj, deleteVueObj} from 'dynamic-vue-object'
 
 export function showTemp(name) {
-  return new Promise(function(res) {
-    createVueObj(temp, {
-      name
-    }, {
-      ok() {
-        res()
-      }
+    return new Promise(function(res) {
+        createVueObj(temp, {
+            name
+        }, {
+            ok() {
+                deleteVueObj()
+                res()
+            }
+        })
     })
-  })
 }
 ```
 
-## 接下来，我们将可以在任何地方使用我们的这个异步函数了。
+## 接下来，我们将可以在任何地方使用我们的这个异步函数，监听点击ok按钮
+
 ```vue
 <template>
     <div>
