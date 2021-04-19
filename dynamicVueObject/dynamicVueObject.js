@@ -7,6 +7,7 @@ import Vue from 'vue';
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 export const dynamicVueEvent = eventEmitter;
+let allGolbueVueObj = [];
 
 let dyVueObj = Vue.extend({
     created() {
@@ -21,6 +22,14 @@ let dyVueObj = Vue.extend({
                 return item.vueObj === vueObj
             }), 1);
         });
+        dynamicVueEvent.on('getVueObj', (vueObj, Callback) => {
+            const findRes = this.allGlobleVue.findIndex(item => {
+                return item.vueObj === vueObj
+            })
+            if (findRes > -1) {
+                Callback(allGolbueVueObj[findRes])
+            }
+        });
     },
     data() {
         return {
@@ -28,12 +37,13 @@ let dyVueObj = Vue.extend({
         }
     },
     render(createElement) {
-        return createElement('div', {}, this.allGlobleVue.map(item => {
+        allGolbueVueObj = this.allGlobleVue.map(item => {
             return createElement(item.vueObj, {
                 props: item.attr,
                 on: item.event
             })
-        }));
+        })
+        return createElement('div', {}, allGolbueVueObj);
     }
 });
 let instance = new dyVueObj({
@@ -50,4 +60,9 @@ export function createVueObj(vueClass, attr, event) {
 
 export function deleteVueObj(obj) {
     dynamicVueEvent.emit('deleteVueObj', obj);
+}
+
+// 获取由vueClass创建的实例
+export function getVueObj(obj, callback) {
+    dynamicVueEvent.emit('getVueObj', obj, callback);
 }
